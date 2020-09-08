@@ -4,7 +4,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-def makeMessage(frame, index):
+def make_message(frame, index):
+
+    """
+    returns a string message
+    """
+
     contents = ''
     contents = contents + "Hi " + frame['Incoming Student Name'][index] + "! \n"
     contents = contents + " You've been matched with an upper-year SYDE student, " + frame['Upper Year Student Name'][
@@ -21,7 +26,8 @@ def makeMessage(frame, index):
                "Then meeting via Zoom or Google Meet / your preferred video conferencing tool" \
                "To discuss feedback. If you would also like a website critique, please also send a link" \
                " to the published site to your upper-year volunteer. \n\n"
-    contents
+    contents = contents + "If you have any questions email me (Sammy, SYDE 2023) at srobensp@uwaterloo.ca."
+    return contents
 
 
 def main():
@@ -29,7 +35,7 @@ def main():
     smtp_server = 'mailservices.uwaterloo.ca'
 
     port = 465
-    sender_email = ''
+    sender_email = 'srobensp@uwaterloo.ca'
     username = input('username: ')
     password = input('password: ')
 
@@ -43,7 +49,9 @@ def main():
             message_to_users['To'] = df['Incoming Student Email'][i]
             message_to_users['Cc'] = df['Upper Year Student Email'][i]
             message_to_users['Subject'] = 'OFFICIAL - Your Resume Critique has a match!'
-            message_to_users.attach(MIMEText('Hi there'), 'plain')
+            message_to_users.attach(MIMEText(make_message(df, i)), 'plain')
+            message_to_users = message_to_users.as_string()
+            server.sendmail(sender_email, df['Incoming Student Email'][i], message_to_users)
 
 
 if __name__ == "__main__":
