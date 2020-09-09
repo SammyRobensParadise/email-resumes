@@ -58,6 +58,7 @@ def main():
             message_to_users.attach(MIMEText(make_message(df, i), 'plain'))
             message_to_users = message_to_users.as_string()
             server.sendmail(sender_email, df['Incoming Student Email'][i], message_to_users)
+            print("send email " + i + " of " + len(df.index))
 
 
 if __name__ == "__main__":
