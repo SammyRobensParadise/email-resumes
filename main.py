@@ -61,8 +61,8 @@ def main():
         for i in range(0, len(df.index)):
             message_to_users = MIMEMultipart()
             message_to_users["From"] = sender_email
-            message_to_users["To"] = df["Requester Student Name"][i]
-            message_to_users["Cc"] = df["Provider Student Name"][i]
+            message_to_users["To"] = df["Requester Student Email"][i]
+            message_to_users["Cc"] = df["Provider Student Email"][i]
             message_to_users[
                 "Subject"
             ] = "OFFICIAL ⚡️ - Your Resume Critique has a match! 🧠"
