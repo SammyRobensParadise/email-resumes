@@ -16,7 +16,7 @@ def make_message(frame, index):
         contents
         + " You've been matched with a SYDE student, "
         + frame["Provider Student Name"][index]
-        + "\n "
+        + "\n"
         "who has volunteered to give you feedback on your resume!"
     )
     contents = (
@@ -30,23 +30,23 @@ def make_message(frame, index):
         "out to your upper year via email ("
         + frame["Provider Student Email"][index]
         + ") to coordinate a REMOTE resume critique. They are also Cc'd on this email."
-        " I suggest sending a copy of your resume in PDF form."
+        " I suggest sending a copy of your resume in PDF form. "
         "Then meeting via Zoom or Google Meet / your preferred video conferencing tool 📹 "
         "To discuss feedback. If you would also like a website critique, please also include a link"
         " to the published site."
-        "I wish you the best on this term term!"
+        " I wish you the best on this term term!"
     )
     contents = (
         contents
         + "If you have any questions email me (Sammy, SYDE 2023) at srobensp@uwaterloo.ca."
-        " or message me on facebook. \n\n"
+        " or message me on the SYDE Discord. \n\n"
         "Thanks, \n Sammy \n https://sammy.world"
     )
     return contents
 
 
 def main():
-    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/test.csv")
+    df = pd.read_csv("/Users/sammyrobens-paradise/projects/template-resume-email/test.csv")
     smtp_server = "mailservices.uwaterloo.ca"
 
     port = 465
@@ -69,9 +69,9 @@ def main():
             message_to_users.attach(MIMEText(make_message(df, i), "plain"))
             message_to_users = message_to_users.as_string()
             server.sendmail(
-                sender_email, df["Requester Student Name"][i], message_to_users
+                sender_email, df["Requester Student Email"][i], message_to_users
             )
-            print("send email " + str(i) + " of " + str(len(df.index)))
+            print("send email " + str(i+1) + " of " + str(len(df.index)))
 
 
 if __name__ == "__main__":
