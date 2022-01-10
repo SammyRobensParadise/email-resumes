@@ -11,13 +11,14 @@ def make_message(frame, index):
     """
 
     contents = ""
-    contents = contents + "<h2>Hi " + frame["Requester Student Name"][index] + "! 👋 </h2>\n"
+    contents = (
+            contents + "<h2>Hi " + frame["Requester Student Name"][index] + "! 👋 </h2>\n"
+    )
     contents = (
             contents
             + "<p><b>You've been matched with a SYDE student, "
             + frame["Provider Student Name"][index]
-            +
-            " who has volunteered to give you feedback on your resume!</b></p>"
+            + " who has volunteered to give you feedback on your resume!</b></p>"
     )
     contents = (
             contents + "<p>I have done my best to pair you up with an upper year student "
@@ -25,11 +26,15 @@ def make_message(frame, index):
                        "but it may not be an 'exact' match, and I apologize in advance. With that being said,"
                        " I am sure the feedback will be of value to you!</p>"
     )
-    contents = (contents + "<h3>You have requested the following:</h3><ul><li>Resume Critique: " +
-                frame["Resume Critique"][
-                    index] + "</li>" \
-                + "<li>Website Critique: " + frame["Website Critique"][index] +
-                "</li></ul><p>Please have the above ready for your session!</p>")
+    contents = (
+            contents
+            + "<h3>You have requested the following:</h3><ul><li>Resume Critique: "
+            + frame["Resume Critique"][index]
+            + "</li>"
+            + "<li>Website Critique: "
+            + frame["Website Critique"][index]
+            + "</li></ul><p>Please have the above ready for your session!</p>"
+    )
     contents = (
             contents + "<p>It is your responsibility to reach "
                        "out to your upper year via email ("
@@ -51,7 +56,7 @@ def make_message(frame, index):
 
 
 def main():
-    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/test.csv")
+    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/test-data.csv")
     smtp_server = "mailservices.uwaterloo.ca"
 
     port = 465
@@ -83,17 +88,27 @@ def main():
             message_to_provider[
                 "Subject"
             ] = "OFFICIAL ⚡️ - You have been selected to review some resumes 🧠"
-            message_to_provider.attach(MIMEText("<p>You have been selected to review" + df["Requester Student Email"][
-                i] + "'s resume/website. Stay tuned! They will reach out to you!</p>" +
-                                                "<p>If you have any questions or concerns," + " please reach out to me (Sammy, SYDE 2023) at srobensp@uwaterloo.ca" + " or message me on Discord</p>" +
-                                                "<p>Thanks</p><p>Sammy</p><p><a href='https://sammy.world'>https://sammy.world</a>",
-                                                "html"))
+            message_to_provider.attach(
+                MIMEText(
+                    "<p>You have been selected to review "
+                    + df["Requester Student Name"][i]
+                    + "'s ("
+                    + df["Requester Student Email"][i]
+                    + ") resume/website. Stay tuned! They will reach out to you!</p>"
+                    + "<p>If you have any questions or concerns,"
+                    + " please reach out to me (Sammy, SYDE 2023) at srobensp@uwaterloo.ca"
+                    + " or message me on Discord</p>"
+                    + "<p>Thanks</p><p>Sammy</p><p><a href='https://sammy.world'>https://sammy.world</a>",
+                    "html",
+                )
+            )
             message_to_provider = message_to_provider.as_string()
             server.sendmail(
                 sender_email, df["Provider Student Email"][i], message_to_provider
             )
 
-            print("send email " + str(i + 1) + " of " + str(len(df.index)))
+            print("send email " + str(i + 1) + " of " + str(len(df.index)) + " for " + df["Requester Student Email"][
+                i] + " and " + df["Provider Student Email"][i])
 
 
 if __name__ == "__main__":
