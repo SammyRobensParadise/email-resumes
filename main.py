@@ -56,7 +56,7 @@ def make_message(frame, index):
 
 
 def main():
-    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/test-data.csv")
+    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/software-users.csv")
     smtp_server = "mailservices.uwaterloo.ca"
 
     port = 465
