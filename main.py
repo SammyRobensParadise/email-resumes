@@ -17,7 +17,7 @@ def make_message(frame, index):
             + "<p><b>You've been matched with a SYDE student, "
             + frame["Provider Student Name"][index]
             +
-            "who has volunteered to give you feedback on your resume!</b></p>"
+            " who has volunteered to give you feedback on your resume!</b></p>"
     )
     contents = (
             contents + "<p>I have done my best to pair you up with an upper year student "
@@ -51,7 +51,7 @@ def make_message(frame, index):
 
 
 def main():
-    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/software-users.csv")
+    df = pd.read_csv("/Users/sammyrobens-paradise/projects/email-resumes/test.csv")
     smtp_server = "mailservices.uwaterloo.ca"
 
     port = 465
@@ -64,18 +64,35 @@ def main():
         server.login(username, password)
 
         for i in range(0, len(df.index)):
-            message_to_users = MIMEMultipart()
-            message_to_users["From"] = sender_email
-            message_to_users["To"] = df["Requester Student Email"][i]
-            message_to_users["Cc"] = df["Provider Student Email"][i]
-            message_to_users[
+            message_to_requester = MIMEMultipart()
+            message_to_provider = MIMEMultipart()
+            message_to_requester["From"] = sender_email
+            message_to_requester["To"] = df["Requester Student Email"][i]
+            message_to_requester["Cc"] = df["Provider Student Email"][i]
+            message_to_requester[
                 "Subject"
             ] = "OFFICIAL ⚡️ - Your Resume Critique has a match! 🧠"
-            message_to_users.attach(MIMEText(make_message(df, i), "html"))
-            message_to_users = message_to_users.as_string()
+            message_to_requester.attach(MIMEText(make_message(df, i), "html"))
+            message_to_requester = message_to_requester.as_string()
             server.sendmail(
-                sender_email, df["Requester Student Email"][i], message_to_users
+                sender_email, df["Requester Student Email"][i], message_to_requester
             )
+            message_to_provider["From"] = sender_email
+            message_to_provider["To"] = df["Provider Student Email"][i]
+            message_to_provider["Cc"] = df["Requester Student Email"][i]
+            message_to_provider[
+                "Subject"
+            ] = "OFFICIAL ⚡️ - You have been selected to review some resumes 🧠"
+            message_to_provider.attach(MIMEText("<p>You have been selected to review" + df["Requester Student Email"][
+                i] + "'s resume/website. Stay tuned! They will reach out to you!</p>" +
+                                                "<p>If you have any questions or concerns," + " please reach out to me (Sammy, SYDE 2023) at srobensp@uwaterloo.ca" + " or message me on Discord</p>" +
+                                                "<p>Thanks</p><p>Sammy</p><p><a href='https://sammy.world'>https://sammy.world</a>",
+                                                "html"))
+            message_to_provider = message_to_provider.as_string()
+            server.sendmail(
+                sender_email, df["Provider Student Email"][i], message_to_provider
+            )
+
             print("send email " + str(i + 1) + " of " + str(len(df.index)))
 
 
