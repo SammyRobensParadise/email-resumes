@@ -5,17 +5,16 @@
 ## It expects a CSV file that looks like the following
 
 
-| Requester Student Name 	| Requester Student Email 	| Provider Student Name 	| Provider Student Email 	|
-|------------------------	|-------------------------	|-----------------------	|------------------------	|
-| Test Name              	| email@email.com         	| Sammy                 	| email2@email.com       	|
-|                        	|                         	|                       	|                        	|
+| Requester Student Name 	| Requester Student Email 	|Resume Critique| Website Critique|Provider Student Name 	| Provider Student Email 	|
+|------------------------	|-------------------------	|----|-----|-----------------------	|------------------------	|
+| Test Name              	| email@email.com         	|Yes/No| Yes/No|Sammy                 	| email2@email.com       	|
+|                        	|                         	                       	|                        	|
 
 ## Usage:
 
 1. Clone
 ```bash
-
-git clone https://github.com/SammyRobensParadise/email-resumes
+git clone https://github.com/SammyRobensParadise/email-resumes.git
 ```
 
 2. install dependencies. I use pip but do whatever floats your boat
