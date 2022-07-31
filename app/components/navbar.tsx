@@ -4,7 +4,6 @@ import Avatar from './avatar';
 
 export default function Navbar() {
   const { user, error } = useUser();
-  console.log(user);
   return (
     <div className='flex font-semibold px-4 py-2 border-b-2 text-gray-900 place-content-between'>
       <div>
@@ -17,7 +16,7 @@ export default function Navbar() {
           </Link>
         </button>
       </div>
-      <div className='flex'>
+      <div className='flex space-x-2'>
         <button
           type='button'
           className='inline-block px-6 py-2.5 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:text-blue-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out'
