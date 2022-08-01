@@ -1,10 +1,20 @@
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0';
 import Spinner from '../components/spinner';
+import { useEffect } from 'react';
 
 const Main: NextPage = () => {
   const { user, error, isLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && !isLoading && !error) {
+      router.push('/home');
+    }
+  }, [error, isLoading, router, user]);
 
   if (isLoading) {
     return (
@@ -42,14 +52,6 @@ const Main: NextPage = () => {
         </p>
       </div>
     );
-
-  if (user) {
-    return (
-      <div>
-        Welcome {user.name}! <Link href='/api/auth/logout'>Logout</Link>
-      </div>
-    );
-  }
 
   return (
     <div className='p-8'>
