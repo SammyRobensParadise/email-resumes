@@ -16,7 +16,7 @@ const Main: NextPage = () => {
     }
   }, [error, isLoading, router, user]);
 
-  if (!user || isLoading) {
+  if (isLoading) {
     return (
       <div className='p-8'>
         <Spinner />
