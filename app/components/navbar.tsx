@@ -5,7 +5,7 @@ import Avatar from './avatar';
 export default function Navbar() {
   const { user, error } = useUser();
   return (
-    <div className='flex font-semibold px-4 py-2 border-b-2 text-gray-900 place-content-between'>
+    <div className='sticky top-0 bg-white flex font-semibold px-4 py-2 border-b-2 text-gray-900 place-content-between'>
       <div>
         <button
           type='button'
