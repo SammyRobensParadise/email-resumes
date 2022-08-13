@@ -11,8 +11,10 @@ export default function Navbar() {
           type='button'
           className='inline-block px-6 py-2.5 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:text-blue-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out'
         >
-          <Link href='/home'>
-            <h2>Email-Resumes</h2>
+          <Link href='/home' passHref>
+            <a>
+              <h2>Email-Resumes</h2>
+            </a>
           </Link>
         </button>
       </div>
@@ -30,12 +32,16 @@ export default function Navbar() {
           className='inline-block px-6 py-2.5 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:text-blue-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out'
         >
           {user && !error ? (
-            <Link href='/api/auth/logout'>
-              <h2>Logout</h2>
+            <Link href='/api/auth/logout' passHref>
+              <a>
+                <h2>Logout</h2>
+              </a>
             </Link>
           ) : (
-            <Link href='/api/auth/login'>
-              <h2>Login</h2>
+            <Link href='/api/auth/login' passHref>
+              <a>
+                <h2>Login</h2>
+              </a>
             </Link>
           )}
         </button>

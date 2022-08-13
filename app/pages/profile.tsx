@@ -3,9 +3,15 @@ import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0';
 import Avatar from '../components/avatar';
 import Spinner from '../components/spinner';
+import useSWR from 'swr';
 
 const Profile: NextPage = () => {
   const { user, isLoading, error } = useUser();
+
+  const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
+  const { data, error: err } = useSWR(`/api/users/${user?.sub}`, fetcher);
+
+  console.log(data);
 
   if (isLoading) {
     return (
@@ -14,7 +20,7 @@ const Profile: NextPage = () => {
       </div>
     );
   }
-  if (error) {
+  if (error && err) {
     return (
       <div className='p-8'>
         <div
@@ -42,7 +48,6 @@ const Profile: NextPage = () => {
       </div>
     );
   }
-
   return (
     <div className='p-8 space-y-4'>
       <div>
