@@ -12,13 +12,18 @@
     "@auth0/nextjs-auth0": "^1.9.1",
     "@headlessui/react": "^1.6.6",
     "aws-sdk": "^2.1185.0",
+    "clsx": "^1.2.1",
+    "lodash": "^4.17.21",
     "next": "12.2.3",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-toastify": "^9.0.8",
+    "swr": "^1.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.9",
     "@babel/preset-env": "^7.18.9",
+    "@types/lodash": "^4.14.182",
     "@types/node": "18.6.1",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
