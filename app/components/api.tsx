@@ -1,5 +1,4 @@
 import { useUser } from '@auth0/nextjs-auth0';
-import useSWR from 'swr';
 import { toast } from 'react-toastify';
 import { useCallback, useEffect } from 'react';
 

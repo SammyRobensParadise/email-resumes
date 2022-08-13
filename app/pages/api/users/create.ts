@@ -26,6 +26,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
             user_id: userInfo.sub,
             created: true,
             grad_year: null,
+
             ...userInfo,
           },
         };

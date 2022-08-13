@@ -9,8 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
   const { id } = req.query;
 
   const queryParams = { TableName: TABLE_NAME, Key: { user_id: id } };
-  console.log(id);
-  database.get(queryParams, (error, result) => {
+  return database.get(queryParams, (error, result) => {
     if (result && !error) {
       res.status(200).send({ message: 'User information retreived', data: result.Item });
     } else {

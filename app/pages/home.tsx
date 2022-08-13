@@ -11,7 +11,7 @@ const Home: NextPage = () => {
 
   const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
 
-  const { data, error: err } = useSWR(`/api/users/${user?.sub}`, fetcher);
+  const { data } = useSWR(`/api/users/${user?.sub}`, fetcher);
 
   if (!user) {
     return (
