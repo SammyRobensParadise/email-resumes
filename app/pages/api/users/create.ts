@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import database from '../../../database';
 
+import _ from 'lodash';
+
 const TABLE_NAME = 'email-resume-users';
 export default function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   if (req.method !== 'PUT') {
@@ -11,8 +13,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
 
   const queryParams = { TableName: TABLE_NAME, Key: { user_id: userInfo.sub } };
 
-  database.get(queryParams, (error, result) => {
-    if (result && !error) {
+  return database.get(queryParams, (error, result) => {
+    if (!_.isEmpty(result) && !error) {
       res.status(200).send({ message: 'User already replicated in database.' });
     } else {
       if (error) {

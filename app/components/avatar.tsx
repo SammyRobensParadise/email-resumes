@@ -8,7 +8,7 @@ export default function Avatar({ size = 24 }: { size?: number }) {
     return (
       <Image
         src={user.picture}
-        className='rounded-full w-32'
+        className='rounded-full w-32 shadow'
         alt='Avatar'
         height={`${size}`}
         width={`${size}`}
