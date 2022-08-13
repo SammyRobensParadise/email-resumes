@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className='min-w-full absolute bottom-0 flex font-semibold px-4 py-2 bg-slate-200 text-gray-900 place-content-between'>
+    <footer className=' bottom-0 fixed min-w-full flex font-semibold px-4 py-2 bg-slate-200 text-gray-900 place-content-between'>
       <div>
         <button
           type='button'
