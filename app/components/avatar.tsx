@@ -8,7 +8,7 @@ export default function Avatar({ size = 24 }: { size?: number }) {
     return (
       <Image
         src={user.picture}
-        className='rounded-full w-32 shadow'
+        className='rounded-full w-32 hover:shadow-lg'
         alt='Avatar'
         height={`${size}`}
         width={`${size}`}
