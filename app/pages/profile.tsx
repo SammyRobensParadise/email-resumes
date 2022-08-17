@@ -1,61 +1,48 @@
 import type { NextPage } from 'next';
-import { useUser } from '@auth0/nextjs-auth0';
 import Avatar from '../components/avatar';
 import Spinner from '../components/spinner';
-import useSWR from 'swr';
 import Alert from '../components/Alert';
-import { ChangeEvent, useState } from 'react';
-import { toast } from 'react-toastify';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import { useRouter } from 'next/router';
+import { canUserCritiqueResumes, Terms, toCurrentTerm } from '../utils/utils';
+import useGradYear from '../hooks/grad-year';
+import useUserManager from '../hooks/user-manager';
 
 const Profile: NextPage = () => {
-  const { user, isLoading, error } = useUser();
   const currentYear = new Date().getFullYear();
-  let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
 
-  const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
-  const { data, error: err } = useSWR(`/api/users/${user?.sub}`, fetcher);
-  const gradutionYear: number | null = data?.data?.grad_year;
+  let [isOpen, setIsOpen] = useState(false);
+  const { gradYear, updateGradYear } = useGradYear();
+  const { deleteCurrentUser, user, isLoading, error } = useUserManager();
+
+  const gradutionYear: number | null = gradYear;
+  const [gradutionYearState, setGradutionyearState] = useState<number | null>(gradutionYear);
+
+  const [term, setTerm] = useState<Terms>(toCurrentTerm(gradutionYear));
+  const [canCritique, setCanCritique] = useState<boolean>(canUserCritiqueResumes(term));
 
   function updateGradutionYear(event: ChangeEvent<HTMLSelectElement>) {
     const year = parseInt(event.target.value);
     if (year === NaN) {
       return;
     }
-    fetch(`/api/users/${user?.sub}/${year}`, { method: 'PUT' })
-      .then((response) => {
-        console.log(response);
-        toast.success(`Graduation updated to ${year}`, {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-  function deleteCurrentUser() {
-    fetch(`/api/users/delete/${user?.sub}`, { method: 'DELETE' }).then(() => {
-      toast.success(`Account deleted successfully`, {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      router.push('/api/auth/logout');
+    updateGradYear(year, () => {
+      setTerm(toCurrentTerm(year));
+      setGradutionyearState(year);
     });
   }
+
+  useEffect(() => {
+    setCanCritique(canUserCritiqueResumes(term));
+  }, [term]);
+
+  useEffect(() => {
+    setGradutionyearState(gradutionYear);
+  }, [gradutionYear]);
+
+  useEffect(() => {
+    setTerm(toCurrentTerm(gradutionYear));
+  }, [gradutionYear]);
 
   if (isLoading) {
     return (
@@ -64,7 +51,7 @@ const Profile: NextPage = () => {
       </div>
     );
   }
-  if (error && err) {
+  if (error) {
     return (
       <div className='p-8'>
         <Alert type='error'>
@@ -151,7 +138,7 @@ const Profile: NextPage = () => {
                   className='form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                   aria-label='Gradution Year'
                   onChange={updateGradutionYear}
-                  defaultValue={gradutionYear?.toString()}
+                  value={`${gradutionYearState}`}
                 >
                   <option value={`${null}`}>Select Graduation Year</option>
                   <option value={`${currentYear}`}>{currentYear}</option>
@@ -163,7 +150,34 @@ const Profile: NextPage = () => {
                   <option value={`${currentYear + 6}`}>{currentYear + 6}</option>
                 </select>
               </div>
+              <p className='leading-8'>Term: {term}</p>
             </div>
+            {canCritique && (
+              <div className='py-2'>
+                <div className='flex space-x-2'>
+                  <input
+                    id='critique-resumes'
+                    type='checkbox'
+                    value='critique_resumes'
+                    className='mt-2 w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-100 focus:ring-blue-500  focus:ring-1'
+                  />
+                  <label htmlFor='critique-resumes' className='text-gray-700 leading-8'>
+                    Critique Resumes
+                  </label>
+                </div>
+                <div className='flex space-x-2'>
+                  <input
+                    id='critique-websites'
+                    type='checkbox'
+                    value='critique_websites'
+                    className='mt-2 w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-100 focus:ring-blue-500  focus:ring-1'
+                  />
+                  <label htmlFor='critique-websites' className='text-gray-700 leading-8'>
+                    Critique Portfolios and Websites
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className='space-y-4 p-6 shadow-md rounded-lg bg-white text-gray-700 m-8 border border-red-600'>
