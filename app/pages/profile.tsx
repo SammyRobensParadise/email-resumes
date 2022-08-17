@@ -1,25 +1,23 @@
 import type { NextPage } from 'next';
-import { useUser } from '@auth0/nextjs-auth0';
 import Avatar from '../components/avatar';
 import Spinner from '../components/spinner';
-import useSWR from 'swr';
 import Alert from '../components/Alert';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { Dialog } from '@headlessui/react';
-import { useRouter } from 'next/router';
 import { canUserCritiqueResumes, Terms, toCurrentTerm } from '../utils/utils';
+import useGradYear from '../hooks/grad-year';
+import useUserManager from '../hooks/user-manager';
 
 const Profile: NextPage = () => {
-  const { user, isLoading, error } = useUser();
   const currentYear = new Date().getFullYear();
-  let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
 
-  const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
-  const { data, error: err } = useSWR(`/api/users/${user?.sub}`, fetcher);
-  const gradutionYear: number | null = data?.data?.grad_year;
+  let [isOpen, setIsOpen] = useState(false);
+  const { gradYear, updateGradYear } = useGradYear();
+  const { deleteCurrentUser, user, isLoading, error } = useUserManager();
+
+  const gradutionYear: number | null = gradYear;
   const [gradutionYearState, setGradutionyearState] = useState<number | null>(gradutionYear);
+
   const [term, setTerm] = useState<Terms>(toCurrentTerm(gradutionYear));
   const [canCritique, setCanCritique] = useState<boolean>(canUserCritiqueResumes(term));
 
@@ -28,31 +26,10 @@ const Profile: NextPage = () => {
     if (year === NaN) {
       return;
     }
-    fetch(`/api/users/${user?.sub}/${year}`, { method: 'PUT' })
-      .then(() => {
-        setTerm(toCurrentTerm(year));
-        setGradutionyearState(year);
-        toast.success(`Graduation updated to ${year}.`, {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      })
-      .catch(() => {
-        toast.error(`Unable to update graduation year to ${year}.`, {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      });
+    updateGradYear(year, () => {
+      setTerm(toCurrentTerm(year));
+      setGradutionyearState(year);
+    });
   }
 
   useEffect(() => {
@@ -63,21 +40,6 @@ const Profile: NextPage = () => {
     setGradutionyearState(gradutionYear);
   }, [gradutionYear]);
 
-  function deleteCurrentUser() {
-    fetch(`/api/users/delete/${user?.sub}`, { method: 'DELETE' }).then(() => {
-      toast.success(`Account deleted successfully`, {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      router.push('/api/auth/logout');
-    });
-  }
-
   if (isLoading) {
     return (
       <div className='p-8'>
@@ -85,7 +47,7 @@ const Profile: NextPage = () => {
       </div>
     );
   }
-  if (error && err) {
+  if (error) {
     return (
       <div className='p-8'>
         <Alert type='error'>
