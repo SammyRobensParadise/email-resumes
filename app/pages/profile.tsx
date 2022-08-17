@@ -4,10 +4,11 @@ import Avatar from '../components/avatar';
 import Spinner from '../components/spinner';
 import useSWR from 'swr';
 import Alert from '../components/Alert';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Dialog } from '@headlessui/react';
 import { useRouter } from 'next/router';
+import { toCurrentTerm } from '../utils/utils';
 
 const Profile: NextPage = () => {
   const { user, isLoading, error } = useUser();
@@ -18,6 +19,7 @@ const Profile: NextPage = () => {
   const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
   const { data, error: err } = useSWR(`/api/users/${user?.sub}`, fetcher);
   const gradutionYear: number | null = data?.data?.grad_year;
+  const [term, setTerm] = useState(toCurrentTerm(gradutionYear));
 
   function updateGradutionYear(event: ChangeEvent<HTMLSelectElement>) {
     const year = parseInt(event.target.value);
@@ -25,9 +27,9 @@ const Profile: NextPage = () => {
       return;
     }
     fetch(`/api/users/${user?.sub}/${year}`, { method: 'PUT' })
-      .then((response) => {
-        console.log(response);
-        toast.success(`Graduation updated to ${year}`, {
+      .then(() => {
+        setTerm(toCurrentTerm(year));
+        toast.success(`Graduation updated to ${year}.`, {
           position: 'top-right',
           autoClose: 5000,
           hideProgressBar: false,
@@ -151,7 +153,7 @@ const Profile: NextPage = () => {
                   className='form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                   aria-label='Gradution Year'
                   onChange={updateGradutionYear}
-                  defaultValue={gradutionYear?.toString()}
+                  value={`${gradutionYear}`}
                 >
                   <option value={`${null}`}>Select Graduation Year</option>
                   <option value={`${currentYear}`}>{currentYear}</option>
@@ -163,6 +165,7 @@ const Profile: NextPage = () => {
                   <option value={`${currentYear + 6}`}>{currentYear + 6}</option>
                 </select>
               </div>
+              <p className='leading-8'>Term: {term}</p>
             </div>
           </div>
         </div>
