@@ -1,10 +1,20 @@
 import moment from 'moment';
 
-export type Terms = '1A' | '1B' | '2A' | '2B' | '3A' | '3B' | '4A' | '4B' | 'GRADUATED';
+export type Terms =
+  | '1A'
+  | '1B'
+  | '2A'
+  | '2B'
+  | '3A'
+  | '3B'
+  | '4A'
+  | '4B'
+  | 'GRADUATED'
+  | 'Loading...';
 
 export function toCurrentTerm(gradYear: number | null): Terms {
   if (!gradYear) {
-    return '1A';
+    return 'Loading...';
   }
   const currentYear = moment().year();
   const currentMonth = moment().month() + 1;

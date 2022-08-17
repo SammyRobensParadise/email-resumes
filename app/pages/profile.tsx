@@ -40,6 +40,10 @@ const Profile: NextPage = () => {
     setGradutionyearState(gradutionYear);
   }, [gradutionYear]);
 
+  useEffect(() => {
+    setTerm(toCurrentTerm(gradutionYear));
+  }, [gradutionYear]);
+
   if (isLoading) {
     return (
       <div className='p-8'>
@@ -148,7 +152,32 @@ const Profile: NextPage = () => {
               </div>
               <p className='leading-8'>Term: {term}</p>
             </div>
-            {canCritique && <div className='flex py-2 space-x-4'>can critique</div>}
+            {canCritique && (
+              <div className='py-2'>
+                <div className='flex space-x-2'>
+                  <input
+                    id='critique-resumes'
+                    type='checkbox'
+                    value='critique_resumes'
+                    className='mt-2 w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-100 focus:ring-blue-500  focus:ring-1'
+                  />
+                  <label htmlFor='critique-resumes' className='text-gray-700 leading-8'>
+                    Critique Resumes
+                  </label>
+                </div>
+                <div className='flex space-x-2'>
+                  <input
+                    id='critique-websites'
+                    type='checkbox'
+                    value='critique_websites'
+                    className='mt-2 w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-100 focus:ring-blue-500  focus:ring-1'
+                  />
+                  <label htmlFor='critique-websites' className='text-gray-700 leading-8'>
+                    Critique Portfolios and Websites
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className='space-y-4 p-6 shadow-md rounded-lg bg-white text-gray-700 m-8 border border-red-600'>
