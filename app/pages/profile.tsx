@@ -43,12 +43,18 @@ const Profile: NextPage = () => {
   }
 
   function deleteCurrentUser() {
-    /*  fetch(`/api/users/delete/${user?.sub}`, { method: 'DELETE' }).then((response) => {
-      console.log(response);
+    fetch(`/api/users/delete/${user?.sub}`, { method: 'DELETE' }).then(() => {
+      toast.success(`Account deleted successfully`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       router.push('/api/auth/logout');
-    });*/
-    // currently just logs user out
-    router.push('/api/auth/logout');
+    });
   }
 
   if (isLoading) {
@@ -81,8 +87,8 @@ const Profile: NextPage = () => {
               </Dialog.Title>
 
               <p>
-                This action cannot be undone. Deleting you account will cancel any resume critique
-                sessions
+                Deleting you account will cancel any resume critique sessions and remove any
+                settings.
               </p>
               <div className='flex space-x-4 pt-4'>
                 <button
