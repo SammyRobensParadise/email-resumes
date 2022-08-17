@@ -5,8 +5,8 @@ export type User = {
   user_id: string;
   created: boolean;
   grad_year: null | number;
-  critique_websites: boolean;
-  critique_resumes: boolean;
+  critique_websites: 'true' | 'false';
+  critique_resumes: 'true' | 'false';
   user_info: UserProfile;
 };
 

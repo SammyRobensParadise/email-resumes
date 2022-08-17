@@ -8,21 +8,29 @@ import { canUserCritiqueResumes, Terms, toCurrentTerm } from '../utils/utils';
 import useGradYear from '../hooks/grad-year';
 import useUserManager from '../hooks/user-manager';
 import useUserInfo from '../hooks/user-info';
+import useCritiqueResumes from '../hooks/critique-resumes';
+import useCritiqueWebsites from '../hooks/critique-websites';
 
 const Profile: NextPage = () => {
   const currentYear = new Date().getFullYear();
   const { data: userData } = useUserInfo();
 
-  const { gradYear, updateGradYear } = useGradYear();
+  const { updateGradYear } = useGradYear();
   const { deleteCurrentUser, user, isLoading, error } = useUserManager();
+  const { updateCritiqueResumes } = useCritiqueResumes();
+  const { updateCritiqueWebsites } = useCritiqueWebsites();
 
-  const gradutionYear: number | null = gradYear;
+  const gradutionYear: number | null = userData?.grad_year;
+  const critiqueStateResume = userData?.critique_resumes === 'true' ? true : false;
+  const critiqueStateWebsite = userData?.critique_websites === 'true' ? true : false;
+
   const [gradutionYearState, setGradutionyearState] = useState<number | null>(gradutionYear);
 
   const [term, setTerm] = useState<Terms>(toCurrentTerm(gradutionYear));
   const [isOpen, setIsOpen] = useState(false);
-  const [critiqueResumes, setCritiqueResumes] = useState<boolean>(userData.critique_resumes);
-  const [critiqueWebsites, setCritiqueWebsites] = useState<boolean>(userData.critique_websites);
+
+  const [critiqueResumes, setCritiqueResumes] = useState<boolean>(critiqueStateResume);
+  const [critiqueWebsites, setCritiqueWebsites] = useState<boolean>(critiqueStateWebsite);
 
   const [canCritique, setCanCritique] = useState<boolean>(canUserCritiqueResumes(term));
 
@@ -37,6 +45,20 @@ const Profile: NextPage = () => {
     });
   }
 
+  function updateResumes(event: ChangeEvent<HTMLInputElement>) {
+    const status = event.target.checked;
+    updateCritiqueResumes(status, () => {
+      setCritiqueResumes(status);
+    });
+  }
+
+  function updateWebsites(event: ChangeEvent<HTMLInputElement>) {
+    const status = event.target.checked;
+    updateCritiqueWebsites(status, () => {
+      setCritiqueWebsites(status);
+    });
+  }
+
   useEffect(() => {
     setCanCritique(canUserCritiqueResumes(term));
   }, [term]);
@@ -48,6 +70,14 @@ const Profile: NextPage = () => {
   useEffect(() => {
     setTerm(toCurrentTerm(gradutionYear));
   }, [gradutionYear]);
+
+  useEffect(() => {
+    setCritiqueResumes(critiqueStateResume);
+  }, [critiqueStateResume]);
+
+  useEffect(() => {
+    setCritiqueWebsites(critiqueStateWebsite);
+  }, [critiqueStateWebsite]);
 
   if (isLoading) {
     return (
@@ -161,10 +191,10 @@ const Profile: NextPage = () => {
               <div className='py-2'>
                 <div className='flex space-x-2'>
                   <input
+                    onChange={updateResumes}
                     checked={critiqueResumes}
                     id='critique-resumes'
                     type='checkbox'
-                    value='critique_resumes'
                     className='mt-2 w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-100 focus:ring-blue-500  focus:ring-1'
                   />
                   <label htmlFor='critique-resumes' className='text-gray-700 leading-8'>
@@ -173,10 +203,10 @@ const Profile: NextPage = () => {
                 </div>
                 <div className='flex space-x-2'>
                   <input
+                    onChange={updateWebsites}
                     checked={critiqueWebsites}
                     id='critique-websites'
                     type='checkbox'
-                    value='critique_websites'
                     className='mt-2 w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-100 focus:ring-blue-500  focus:ring-1'
                   />
                   <label htmlFor='critique-websites' className='text-gray-700 leading-8'>
