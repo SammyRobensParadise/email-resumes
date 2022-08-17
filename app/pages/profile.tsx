@@ -7,11 +7,12 @@ import { Dialog } from '@headlessui/react';
 import { canUserCritiqueResumes, Terms, toCurrentTerm } from '../utils/utils';
 import useGradYear from '../hooks/grad-year';
 import useUserManager from '../hooks/user-manager';
+import useUserInfo from '../hooks/user-info';
 
 const Profile: NextPage = () => {
   const currentYear = new Date().getFullYear();
+  const { data: userData } = useUserInfo();
 
-  let [isOpen, setIsOpen] = useState(false);
   const { gradYear, updateGradYear } = useGradYear();
   const { deleteCurrentUser, user, isLoading, error } = useUserManager();
 
@@ -19,6 +20,10 @@ const Profile: NextPage = () => {
   const [gradutionYearState, setGradutionyearState] = useState<number | null>(gradutionYear);
 
   const [term, setTerm] = useState<Terms>(toCurrentTerm(gradutionYear));
+  const [isOpen, setIsOpen] = useState(false);
+  const [critiqueResumes, setCritiqueResumes] = useState<boolean>(userData.critique_resumes);
+  const [critiqueWebsites, setCritiqueWebsites] = useState<boolean>(userData.critique_websites);
+
   const [canCritique, setCanCritique] = useState<boolean>(canUserCritiqueResumes(term));
 
   function updateGradutionYear(event: ChangeEvent<HTMLSelectElement>) {
@@ -156,6 +161,7 @@ const Profile: NextPage = () => {
               <div className='py-2'>
                 <div className='flex space-x-2'>
                   <input
+                    checked={critiqueResumes}
                     id='critique-resumes'
                     type='checkbox'
                     value='critique_resumes'
@@ -167,6 +173,7 @@ const Profile: NextPage = () => {
                 </div>
                 <div className='flex space-x-2'>
                   <input
+                    checked={critiqueWebsites}
                     id='critique-websites'
                     type='checkbox'
                     value='critique_websites'

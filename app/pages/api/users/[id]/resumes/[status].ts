@@ -1,19 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import database from '../../../../database';
+import database from '../../../../../database';
 
 const TABLE_NAME = 'email-resume-users';
 export default function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   if (req.method !== 'PUT') {
     res.status(500).send({ message: 'Bad Request. only PUT requests are qualified' });
   }
-  const { id, year } = req.query;
+  const { id, status } = req.query;
 
   const queryParams = {
     TableName: TABLE_NAME,
     Key: { user_id: id },
-    UpdateExpression: 'set grad_year = :x',
+    UpdateExpression: 'set critique_resumes = :x',
     ExpressionAttributeValues: {
-      ':x': year,
+      ':x': status,
     },
   };
   return database.update(queryParams, (error, result) => {
