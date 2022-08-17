@@ -8,7 +8,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Dialog } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import { toCurrentTerm } from '../utils/utils';
+import { canUserCritiqueResumes, Terms, toCurrentTerm } from '../utils/utils';
 
 const Profile: NextPage = () => {
   const { user, isLoading, error } = useUser();
@@ -19,7 +19,9 @@ const Profile: NextPage = () => {
   const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
   const { data, error: err } = useSWR(`/api/users/${user?.sub}`, fetcher);
   const gradutionYear: number | null = data?.data?.grad_year;
-  const [term, setTerm] = useState(toCurrentTerm(gradutionYear));
+  const [gradutionYearState, setGradutionyearState] = useState<number | null>(gradutionYear);
+  const [term, setTerm] = useState<Terms>(toCurrentTerm(gradutionYear));
+  const [canCritique, setCanCritique] = useState<boolean>(canUserCritiqueResumes(term));
 
   function updateGradutionYear(event: ChangeEvent<HTMLSelectElement>) {
     const year = parseInt(event.target.value);
@@ -29,6 +31,7 @@ const Profile: NextPage = () => {
     fetch(`/api/users/${user?.sub}/${year}`, { method: 'PUT' })
       .then(() => {
         setTerm(toCurrentTerm(year));
+        setGradutionyearState(year);
         toast.success(`Graduation updated to ${year}.`, {
           position: 'top-right',
           autoClose: 5000,
@@ -39,10 +42,26 @@ const Profile: NextPage = () => {
           progress: undefined,
         });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        toast.error(`Unable to update graduation year to ${year}.`, {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   }
+
+  useEffect(() => {
+    setCanCritique(canUserCritiqueResumes(term));
+  }, [term]);
+
+  useEffect(() => {
+    setGradutionyearState(gradutionYear);
+  }, [gradutionYear]);
 
   function deleteCurrentUser() {
     fetch(`/api/users/delete/${user?.sub}`, { method: 'DELETE' }).then(() => {
@@ -153,7 +172,7 @@ const Profile: NextPage = () => {
                   className='form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                   aria-label='Gradution Year'
                   onChange={updateGradutionYear}
-                  value={`${gradutionYear}`}
+                  value={`${gradutionYearState}`}
                 >
                   <option value={`${null}`}>Select Graduation Year</option>
                   <option value={`${currentYear}`}>{currentYear}</option>
@@ -167,6 +186,7 @@ const Profile: NextPage = () => {
               </div>
               <p className='leading-8'>Term: {term}</p>
             </div>
+            {canCritique && <div className='flex py-2 space-x-4'>can critique</div>}
           </div>
         </div>
         <div className='space-y-4 p-6 shadow-md rounded-lg bg-white text-gray-700 m-8 border border-red-600'>

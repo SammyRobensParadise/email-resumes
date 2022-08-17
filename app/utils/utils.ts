@@ -42,3 +42,10 @@ export function toCurrentTerm(gradYear: number | null): Terms {
   }
   return '1A';
 }
+
+export function canUserCritiqueResumes(term: Terms): boolean {
+  if (term === '1A' || term === '1B' || term === '2A') {
+    return false;
+  }
+  return true;
+}
