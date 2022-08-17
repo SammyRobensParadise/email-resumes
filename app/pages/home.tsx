@@ -4,14 +4,13 @@ import { useUser } from '@auth0/nextjs-auth0';
 import { useState } from 'react';
 import useSWR from 'swr';
 import Alert from '../components/Alert';
+import useUserInfo from '../hooks/user-info';
 
 const Home: NextPage = () => {
   const [currentTab, setTab] = useState<'CRITIQUES' | 'COACHINGS'>('CRITIQUES');
   const { user } = useUser();
 
-  const fetcher = (url: string) => fetch(url).then(async (res) => res.json());
-
-  const { data } = useSWR(`/api/users/${user?.sub}`, fetcher);
+  const { data } = useUserInfo();
 
   if (!user) {
     return (
@@ -52,7 +51,7 @@ const Home: NextPage = () => {
       {!user?.email_verified && (
         <Alert type='warning'>Psst! We sent you an email to confirm it is really you!</Alert>
       )}
-      {!data?.data?.grad_year && (
+      {!data?.grad_year && (
         <Alert type='warning'>
           <Link href='/profile' passHref>
             <a className='underline'>Add your graduation year to begin singing up</a>

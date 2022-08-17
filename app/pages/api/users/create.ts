@@ -9,9 +9,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
     res.status(500).send({ message: 'Bad Request. only PUT requests are qualified' });
   }
 
-  const userInfo = JSON.parse(req.body);
+  const user_info = JSON.parse(req.body);
 
-  const queryParams = { TableName: TABLE_NAME, Key: { user_id: userInfo.sub } };
+  const queryParams = { TableName: TABLE_NAME, Key: { user_id: user_info.sub } };
 
   return database.get(queryParams, (error, result) => {
     if (!_.isEmpty(result) && !error) {
@@ -23,11 +23,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
         const params = {
           TableName: TABLE_NAME,
           Item: {
-            user_id: userInfo.sub,
+            user_id: user_info.sub,
             created: true,
             grad_year: null,
-
-            ...userInfo,
+            critique_websites: false,
+            critique_resumes: true,
+            ...user_info,
           },
         };
         database.put(params, (error, response) => {

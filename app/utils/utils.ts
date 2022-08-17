@@ -1,20 +1,10 @@
 import moment from 'moment';
 
-export type Terms =
-  | '1A'
-  | '1B'
-  | '2A'
-  | '2B'
-  | '3A'
-  | '3B'
-  | '4A'
-  | '4B'
-  | 'GRADUATED'
-  | 'Loading...';
+export type Terms = '1A' | '1B' | '2A' | '2B' | '3A' | '3B' | '4A' | '4B' | 'GRADUATED' | '...';
 
 export function toCurrentTerm(gradYear: number | null): Terms {
   if (!gradYear) {
-    return 'Loading...';
+    return '...';
   }
   const currentYear = moment().year();
   const currentMonth = moment().month() + 1;
@@ -27,7 +17,7 @@ export function toCurrentTerm(gradYear: number | null): Terms {
     return '4B';
   }
   if (diff === 1) {
-    if (currentMonth >= 8) {
+    if (currentMonth >= 9) {
       return '4A';
     }
     return '3B';
@@ -39,7 +29,7 @@ export function toCurrentTerm(gradYear: number | null): Terms {
     return '2B';
   }
   if (diff === 3) {
-    if (currentMonth >= 8) {
+    if (currentMonth >= 9) {
       return '2B';
     }
     return '2A';
