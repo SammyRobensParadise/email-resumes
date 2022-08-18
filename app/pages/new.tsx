@@ -9,6 +9,10 @@ const New: NextPage = () => {
 
   const [withResume, setWithResume] = useState<boolean>(false);
   const [withWebsite, setWithWebsite] = useState<boolean>(false);
+  const [resumeUpload, setResumeUpload] = useState<File>();
+
+  const [description, setDescription] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState();
 
   // const { data } = useUserInfo();
 
