@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+input::file-selector-button {
+  color: #ffffff;
+  padding: 8px;
+  border: thin solid #2563eb;
+  border-radius: 3px 0px 0px 3px;
+  background: #2563eb;
+  margin-right: 12px;
+}
 body {
   position: relative;
   min-height: 100vh;
