@@ -29,30 +29,17 @@ export default function useUserManager(): {
 
   function createUser() {
     if (user?.sub) {
-      fetch('/api/users/create', { method: 'PUT', body: JSON.stringify(user) })
-        .then(async (res) => {
-          const response = await res.json();
-          toast.info(response.message, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        })
-        .catch((error) =>
-          toast.error(error.message, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }),
-        );
+      fetch('/api/users/create', { method: 'PUT', body: JSON.stringify(user) }).catch((error) =>
+        toast.error(error.message, {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }),
+      );
     }
   }
 
