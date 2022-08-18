@@ -15,7 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
 
   return database.get(queryParams, (error, result) => {
     if (!_.isEmpty(result) && !error) {
-      res.status(200).send({ message: 'User already replicated in database.' });
+      res.status(200).send({ message: 'Up to date!' });
     } else {
       if (error) {
         res.status(500).send({ message: 'Unable to retrieve user information.', error });
@@ -28,6 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
             grad_year: null,
             critique_websites: false,
             critique_resumes: true,
+            critique_count_per_term: 3,
             ...user_info,
           },
         };

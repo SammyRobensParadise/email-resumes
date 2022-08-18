@@ -10,6 +10,7 @@ import useUserManager from '../hooks/user-manager';
 import useUserInfo from '../hooks/user-info';
 import useCritiqueResumes from '../hooks/critique-resumes';
 import useCritiqueWebsites from '../hooks/critique-websites';
+import useCritiqueCount from '../hooks/critique-count';
 
 const Profile: NextPage = () => {
   const currentYear = new Date().getFullYear();
@@ -19,12 +20,15 @@ const Profile: NextPage = () => {
   const { deleteCurrentUser, user, isLoading, error } = useUserManager();
   const { updateCritiqueResumes } = useCritiqueResumes();
   const { updateCritiqueWebsites } = useCritiqueWebsites();
+  const { updateCritiqueCount } = useCritiqueCount();
 
   const gradutionYear: number | null = userData?.grad_year;
   const critiqueStateResume = userData?.critique_resumes === 'true' ? true : false;
   const critiqueStateWebsite = userData?.critique_websites === 'true' ? true : false;
+  const critiqueCount = userData?.critique_count_per_term;
 
   const [gradutionYearState, setGradutionyearState] = useState<number | null>(gradutionYear);
+  const [critiqueCountState, setCritiqueCountState] = useState<number | null>(critiqueCount);
 
   const [term, setTerm] = useState<Terms>(toCurrentTerm(gradutionYear));
   const [isOpen, setIsOpen] = useState(false);
@@ -59,6 +63,13 @@ const Profile: NextPage = () => {
     });
   }
 
+  function updateCount(event: ChangeEvent<HTMLSelectElement>) {
+    const count = parseInt(event.target.value);
+    updateCritiqueCount(count, () => {
+      setCritiqueCountState(count);
+    });
+  }
+
   useEffect(() => {
     setCanCritique(canUserCritiqueResumes(term));
   }, [term]);
@@ -78,6 +89,10 @@ const Profile: NextPage = () => {
   useEffect(() => {
     setCritiqueWebsites(critiqueStateWebsite);
   }, [critiqueStateWebsite]);
+
+  useEffect(() => {
+    setCritiqueCountState(critiqueCount);
+  }, [critiqueCount]);
 
   if (isLoading) {
     return (
@@ -142,7 +157,7 @@ const Profile: NextPage = () => {
             <Avatar size={64} />
           </div>
           <div className='flex flex-row space-x-4'>
-            <p className='pb-4 text-gray-700'>Name</p>
+            <p className='pb-4 text-gray-700'>Name:</p>
             <p className='text-gray-500'>{user?.name}</p>
           </div>
           <div className='flex flex-row space-x-4'>
@@ -159,7 +174,7 @@ const Profile: NextPage = () => {
             )}
           </div>
           <div className='flex flex-row space-x-4'>
-            <p className='pb-4 text-gray-700 '>Last Updated</p>
+            <p className='pb-4 text-gray-700 '>Last Updated:</p>
             <p className='text-gray-500'>{new Date(user?.updated_at ?? '').toLocaleDateString()}</p>
           </div>
         </div>
@@ -174,8 +189,11 @@ const Profile: NextPage = () => {
                   aria-label='Gradution Year'
                   onChange={updateGradutionYear}
                   value={`${gradutionYearState}`}
+                  placeholder='Select Gradution Year'
                 >
-                  <option value={`${null}`}>Select Graduation Year</option>
+                  <option value={`${null}`} disabled>
+                    Select Graduation Year
+                  </option>
                   <option value={`${currentYear}`}>{currentYear}</option>
                   <option value={`${currentYear + 1}`}>{currentYear + 1}</option>
                   <option value={`${currentYear + 2}`}>{currentYear + 2}</option>
@@ -186,6 +204,24 @@ const Profile: NextPage = () => {
                 </select>
               </div>
               <p className='leading-8'>Term: {term}</p>
+            </div>
+            <div className='flex py-2 space-x-4'>
+              <p className='leading-8'>Critique Sessions Per Term:</p>
+              <div className='mb-3 xl:w-96'>
+                <select
+                  className='form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+                  aria-label='Gradution Year'
+                  onChange={updateCount}
+                  value={`${critiqueCountState}`}
+                  placeholder='Select Gradution Year'
+                >
+                  <option value={`${1}`}>{1}</option>
+                  <option value={`${2}`}>{2}</option>
+                  <option value={`${3}`}>{3}</option>
+                  <option value={`${4}`}>{4}</option>
+                  <option value={`${5}`}>{5}</option>
+                </select>
+              </div>
             </div>
             {canCritique && (
               <div className='py-2'>

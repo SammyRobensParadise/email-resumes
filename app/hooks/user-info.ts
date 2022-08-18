@@ -7,6 +7,7 @@ export type User = {
   grad_year: null | number;
   critique_websites: 'true' | 'false';
   critique_resumes: 'true' | 'false';
+  critique_count_per_term: number;
   user_info: UserProfile;
 };
 

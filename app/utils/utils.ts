@@ -44,7 +44,7 @@ export function toCurrentTerm(gradYear: number | null): Terms {
 }
 
 export function canUserCritiqueResumes(term: Terms): boolean {
-  if (term === '1A' || term === '1B' || term === '2A') {
+  if (term === '1A' || term === '1B' || term === '2A' || term === '...') {
     return false;
   }
   return true;
