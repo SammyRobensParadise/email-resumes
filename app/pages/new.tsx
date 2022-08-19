@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useUser } from '@auth0/nextjs-auth0';
 import useUserInfo from '../hooks/user-info';
 import Unauthorized from '../components/Unauthorized';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 const New: NextPage = () => {
   const { user } = useUser();
@@ -11,10 +11,8 @@ const New: NextPage = () => {
   const [withWebsite, setWithWebsite] = useState<boolean>(false);
   const [resumeUpload, setResumeUpload] = useState<File>();
 
-  const [description, setDescription] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState();
-
-  // const { data } = useUserInfo();
+  const [description, setDescription] = useState<string>('');
+  const [websiteUrl, setWebsiteUrl] = useState<string>('');
 
   function updateWithResume(event: ChangeEvent<HTMLInputElement>) {
     const status = event.target.checked;
@@ -24,6 +22,24 @@ const New: NextPage = () => {
   function updateWithWebsite(event: ChangeEvent<HTMLInputElement>) {
     const status = event.target.checked;
     setWithWebsite(status);
+  }
+
+  function handleDescriptionChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    setDescription(event.target.value);
+  }
+
+  function handleWebsiteUrlChange(event: ChangeEvent<HTMLInputElement>) {
+    setWebsiteUrl(event.target.value);
+  }
+
+  function handleResumeUpload(event: ChangeEvent<HTMLInputElement>) {
+    if (event?.target.files) {
+      setResumeUpload(event.target.files[0]);
+    }
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
   }
 
   if (!user) {
@@ -38,7 +54,7 @@ const New: NextPage = () => {
     <div className='p-8 space-y-4'>
       <div className='block p-6 rounded-lg shadow-lg bg-white'>
         <h3 className='text-3xl font-bold'>New Critique</h3>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className='py-2'>
             <p className='font-medium py-2'>What would you like critiqued?</p>
             <div className='flex space-x-2'>
@@ -75,6 +91,7 @@ const New: NextPage = () => {
                   type='file'
                   id='resume'
                   accept='image/*,.pdf'
+                  onChange={handleResumeUpload}
                 />
               </div>
             </div>
@@ -86,6 +103,7 @@ const New: NextPage = () => {
                   Portfolio Link
                 </label>
                 <input
+                  onChange={handleWebsiteUrlChange}
                   type='text'
                   className='form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                   id='website-url'
@@ -102,8 +120,8 @@ const New: NextPage = () => {
               Description
             </label>
             <textarea
-              className='form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
-      '
+              className='form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+              onChange={handleDescriptionChange}
               id='critique-description'
               rows={1}
               placeholder='Describe your needs'
