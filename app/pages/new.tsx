@@ -1,11 +1,12 @@
 import type { NextPage } from 'next';
 import { useUser } from '@auth0/nextjs-auth0';
-import useUserInfo from '../hooks/user-info';
 import Unauthorized from '../components/Unauthorized';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import Spinner from '../components/spinner';
+import useCritiqueManager, { CritiqueConfig } from '../hooks/critique-manager';
 
 const New: NextPage = () => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
 
   const [withResume, setWithResume] = useState<boolean>(false);
   const [withWebsite, setWithWebsite] = useState<boolean>(false);
@@ -13,6 +14,8 @@ const New: NextPage = () => {
 
   const [description, setDescription] = useState<string>('');
   const [websiteUrl, setWebsiteUrl] = useState<string>('');
+
+  const { createCritique } = useCritiqueManager();
 
   function updateWithResume(event: ChangeEvent<HTMLInputElement>) {
     const status = event.target.checked;
@@ -39,7 +42,26 @@ const New: NextPage = () => {
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (user) {
+      const config: CritiqueConfig = {
+        critique_resume: withResume,
+        critique_website: withWebsite,
+        description,
+        website_url: websiteUrl,
+        resume: resumeUpload,
+        author: user,
+      };
+      createCritique(config);
+    }
     event.preventDefault();
+  }
+
+  if (isLoading) {
+    return (
+      <div className='p-8'>
+        <Spinner />
+      </div>
+    );
   }
 
   if (!user) {

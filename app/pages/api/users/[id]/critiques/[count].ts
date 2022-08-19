@@ -11,7 +11,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
   const queryParams = {
     TableName: TABLE_NAME,
     Key: { user_id: id },
-    UpdateExpression: 'set ccritique_count_per_term = :x',
+    UpdateExpression: 'set critique_count_per_term = :x',
     ExpressionAttributeValues: {
       ':x': count,
     },

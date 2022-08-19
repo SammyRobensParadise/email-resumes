@@ -1,12 +1,25 @@
-import { useUser } from '@auth0/nextjs-auth0';
+import { UserProfile, useUser } from '@auth0/nextjs-auth0';
 
-export default function useCritiqueManager() {
-  const { user } = useUser();
+export type CritiqueConfig = {
+  critique_resume: boolean;
+  critique_website: boolean;
+  resume?: File;
+  website_url?: string;
+  description: string;
+  author: UserProfile;
+};
 
-  function createCritique() {
-    if (user?.sub) {
-      fetch('/api/critique/create', { method: 'POST', body: JSON.stringify(user) })
-        .then((response) => {})
+export interface useCritiqueManagerInterface {
+  createCritique: (config: CritiqueConfig, callback?: (response?: Response) => void) => void;
+}
+
+export default function useCritiqueManager(): useCritiqueManagerInterface {
+  function createCritique(config: CritiqueConfig, callback?: (response?: Response) => void) {
+    if (config?.author?.sub) {
+      fetch('/api/critique/create', { method: 'POST', body: JSON.stringify(config) })
+        .then((response) => {
+          if (callback) callback(response);
+        })
         .catch((error) => {});
     }
   }
